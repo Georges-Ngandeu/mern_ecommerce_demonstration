@@ -34,6 +34,18 @@ module.exports = [
         "stock": "15",
         "numOfReviews": "",
         "reviews": []
+    },
+    {
+        "name": "Printacop",
+        "price": "1550",
+        "description": "The next generation printer",
+        "ratings": "10",
+        "images": [],
+        "category": "Electronic",
+        "seller": "Ousman Deals",
+        "stock": "10",
+        "numOfReviews": "",
+        "reviews": []
     }
 
 ]
