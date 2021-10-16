@@ -1,4 +1,13 @@
 //create token and save to cookie
+/*
+|------------------------------------------------------------------
+|Algorithmic Thinking
+|------------------------------------------------------------------
+|1) generate the user token
+|2) set cookie options
+|3) store token in cookie with cookie options
+|4) return token and user 
+*/
 const sendToken = (user, statusCode, res) => {
     const token = user.getJwtToken()
     const options = {

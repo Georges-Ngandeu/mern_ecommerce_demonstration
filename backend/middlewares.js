@@ -57,6 +57,18 @@ const errorMiddleware = (err, req, res, next) => {
     }
 }
 
+/*
+|------------------------------------------------------------------
+|Algorithmic Thinking
+|------------------------------------------------------------------
+|1) get token from cookie
+|2) token exist ?
+|   no: return "Login first" error message
+|3) decode the token 
+|4) get the user with id from the decoded token 
+|5) store the user in the request 
+|6) go to the next step
+*/
 const isAuthenticatedUser = catchAsyncError(async (req, res, next) => {
     const {token} = req.cookies
 

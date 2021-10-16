@@ -5,6 +5,16 @@ class ApiFeatures {
         this.result = {}
     }
 
+    /*
+    |------------------------------------------------------------------
+    |Algorithmic Thinking
+    |------------------------------------------------------------------
+    |1) is search keyword define ?
+    |   yes: set the search parameter object
+    |   no: set search parameter object to an empty object
+    |2) run the search query with the search parameter object
+    |3) return the result
+    */
     search(){
         const keyword = this.queryStr.keyword ? {
             name: {
@@ -17,6 +27,16 @@ class ApiFeatures {
         return this
     }
 
+    /*
+    |------------------------------------------------------------------
+    |Algorithmic Thinking
+    |------------------------------------------------------------------
+    |1) get the search query string object
+    |2) remove fields "keyword", "limit" and "page"
+    |3) prepare the query parameter object
+    |4) run the query with the search parameter object
+    |5) return the result
+    */
     filter(){
         const queryCopy = {...this.queryStr}
         const removeFields = ['keyword', 'limit', 'page']
@@ -30,6 +50,15 @@ class ApiFeatures {
         return this
     }
 
+    /*
+    |------------------------------------------------------------------
+    |Algorithmic Thinking
+    |------------------------------------------------------------------
+    |1) get the current page
+    |2) compute the skip from the current page
+    |3) run the query with skip and limit
+    |4) return the result
+    */
     paginate(resPerPage){
         const currentPage =  Number(this.queryStr.page) || 1
         const skip = resPerPage * (currentPage - 1)
