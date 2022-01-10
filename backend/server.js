@@ -1,5 +1,9 @@
 const express  = require('express')
 const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
+const cloudinary  = require('cloudinary').v2
+const fileUpload = require('express-fileupload')
+
 const app = express()
 const router = express.Router()
 
@@ -10,15 +14,24 @@ const {createOrder, deleteOrder, getSingleOrder, getUserOrders, getallOrders, up
 const {registerUser, deleteUser, adminUpdateUserProfile, getUserDetails, getAllUsers, updateUserProfile, updatePassword, logIn, logOut, forgotPassword, resetPassword, getUserProfile} = require('./controllers/userCtrl')
 
 app.use(express.json())
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(cookieParser())
+app.use(fileUpload())
 app.use('/api/v1', router)
 app.use(errorMiddleware)
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true
+})
 
 /* products routes */
 router.route('/review').put(isAuthenticatedUser, createProductReview)
 router.route('/reviews').get(getAllProductReviews)
 router.route('/reviews').delete(deleteProductReview)
-router.route('/products').get(authorizeRoles('admin'), getProducts)
+router.route('/products').get(getProducts)
 router.route('/admin/product').post(isAuthenticatedUser, authorizeRoles('admin'), createProduct)
 router.route('/product/:id').get(getProduct)
 router.route('/admin/product/:id').put(isAuthenticatedUser, authorizeRoles('admin'), updateProduct)

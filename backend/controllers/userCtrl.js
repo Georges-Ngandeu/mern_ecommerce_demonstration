@@ -3,6 +3,7 @@ const User = require('../models/user')
 const sendToken = require('../jwtToken')
 const sendEmail = require('../sendEmail')
 const crypto = require('crypto')
+const cloudinary = require('cloudinary').v2 
 
 //Register a user => /api/v1/register
 /*
@@ -16,14 +17,24 @@ const crypto = require('crypto')
 |5) return the token and the user
 */
 const registerUser = catchAsyncError(async (req, res, next) => {
+
+    const result = await cloudinary.uploader.upload(req.body.avatar, {
+        folder: 'avatars',
+        width: 150,
+        crop: 'scale',
+        // public_id: `${Date.now()}`,
+        // resource_type: "auto",
+    })
+    
     const {name, email, password } = req.body
+
     const user = await User.create({
         name,
         email,
         password,
         avatar: {
-            public_id: '',
-            url:''
+            public_id: result.public_id,
+            url: result.secure_url
         }
     })
 
@@ -110,9 +121,10 @@ const forgotPassword = catchAsyncError(async (req, res, next) => {
 
     await user.save({validateBeforeSave: false})
 
-    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/password/reset/${resetToken}`
+    //const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/password/reset/${resetToken}`
+    const resetUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`
 
-    const message = `Your passwprd reset token is as follow:\n\n ${resetUrl}\n\nIf you have not requested this email, then ignore it.`
+    const message = `Your password reset token is as follow:\n\n ${resetUrl}\n\nIf you have not requested this email, then ignore it.`
 
     try {
         await sendEmail({
@@ -244,6 +256,25 @@ const updateUserProfile = catchAsyncError(async (req, res, next) => {
     const newUserData = {
         name: req.body.name,
         email: req.body.email
+    }
+
+    if(req.body.avatar !== ''){
+        const user = await User.findById(req.user.id)
+        const image_id = user.avatar.public_id
+        const res = await cloudinary.uploader.destroy(image_id)
+    }
+
+    const result = await cloudinary.uploader.upload(req.body.avatar, {
+        folder: 'avatars',
+        width: 150,
+        crop: 'scale',
+        // public_id: `${Date.now()}`,
+        // resource_type: "auto",
+    })
+
+    newUserData.avatar = {
+        public_id: result.public_id,
+        url: result.secure_url
     }
 
     const user = await User.findByIdAndUpdate(req.user.id, newUserData, {

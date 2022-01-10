@@ -31,20 +31,31 @@ const createProduct = catchAsyncError(async (req, res, next) => {
 |3) return the products list, the total number of products and the total products
 |   with the seach and paginate criteria   
 */
-const getProducts = catchAsyncError(async (req, res) => {
-    const resPerPage = 2
+const getProducts = catchAsyncError(async (req, res, next) => {
+    const resPerPage = 4
     const productCount = await Product.countDocuments()
-    const apiFeatures = new ApiFeatures(Product.find(), req.query)
+
+    let apiFeatures = new ApiFeatures(Product.find(), req.query)
+        .search()
+        .filter()
+
+    let filteredProducts = await apiFeatures.query
+    let filteredProductCount = filteredProducts.length
+
+
+    apiFeatures = new ApiFeatures(Product.find(), req.query)
         .search()
         .filter()
         .paginate(resPerPage)
 
-    const products = await apiFeatures.result
+    let products = await apiFeatures.query
+
     return res.status(200).json({
         success: true,
-        count: products.length,
         productCount,
-        products: products
+        resPerPage,
+        products: products,
+        filteredProductCount
     })
 })
 
