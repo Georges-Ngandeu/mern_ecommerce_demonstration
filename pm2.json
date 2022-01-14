@@ -1,0 +1,12 @@
+{                                      
+  apps : [                             
+      {                                
+        name: "mernecommerce_backend", 
+        script: "./backend/server.js", 
+        watch: true,                   
+        env: {                         
+          "NODE_ENV": "PRODUCTION",    
+        }                              
+      }                                
+  ]                                    
+}                                      
